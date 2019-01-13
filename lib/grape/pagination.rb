@@ -44,11 +44,11 @@ module Grape
           per_page_values = enforce_max_per_page ? 0..options[:max_per_page] : nil
 
           params do
-            optional :page,     :type   => Integer, :default => 1,
+            optional ApiPagination.config.page_param_key,     :type   => Integer, :default => 1,
                                 :desc   => 'Page of results to fetch.'
-            optional :per_page, :type   => Integer, :default => options[:per_page],
-                                :desc   => 'Number of results to return per page.',
-                                :values => per_page_values
+            optional ApiPagination.config.per_page_param_key, :type   => Integer, :default => options[:per_page],
+                                                              :desc   => 'Number of results to return per page.',
+                                                              :values => per_page_values
           end
         end
       end

@@ -12,6 +12,8 @@ module ApiPagination
 
     attr_accessor :response_formats
 
+    attr_reader :page_param_key, :per_page_param_key
+
     def configure(&block)
       yield self
     end
@@ -23,11 +25,14 @@ module ApiPagination
       @include_total   = true
       @base_url   = nil
       @response_formats = [:json, :xml]
+      @page_param_key = :page
+      @per_page_param_key = :per_page
     end
 
     ['page', 'per_page'].each do |param_name|
       method_name = "#{param_name}_param"
       instance_variable_name = "@#{method_name}"
+      param_key = "#{instance_variable_name}_key"
 
       define_method method_name do |params = nil, &block|
         if block.is_a?(Proc)
@@ -45,6 +50,7 @@ module ApiPagination
 
       define_method "#{method_name}=" do |param|
         if param.is_a?(Symbol) || param.is_a?(String)
+          instance_variable_set(param_key, param)
           instance_variable_set(instance_variable_name, (lambda { |params| params[param] }))
         else
           raise ArgumentError, "Cannot set page_param option"
